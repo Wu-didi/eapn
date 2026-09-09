@@ -4,10 +4,10 @@
   const section=document.getElementById('real-robot-case'),tcp=window.REAL_ROBOT_TCP;
   if(!section||!tcp)return;
   const panel=document.createElement('div');panel.className='real-urdf-panel';panel.id='real-robot-3d';panel.dataset.status='waiting';
-  panel.innerHTML=`<div class="real-urdf-heading"><div><b>3D 双臂与夹爪回放</b><small>真实关节角驱动 · 跟随上方视频 · 拖动旋转 / 滚轮缩放</small></div><div class="real-urdf-actions"><button class="urdf-play" type="button">播放 / 暂停</button><button class="urdf-restart" type="button">从头</button><select class="urdf-view" aria-label="3D 模型视角"><option value="iso">3D 视角</option><option value="front">正面</option><option value="top">俯视</option></select><button class="urdf-reset-view" type="button">复位视角</button><button class="urdf-trails" type="button" aria-pressed="true">隐藏轨迹</button></div></div>
-    <div class="real-urdf-grid">${tcp.clips.map(c=>`<div class="real-urdf-model" data-method="${c.method}"><div class="real-urdf-label"><b class="${c.method}">${c.method==='ours'?'我们的方法':'对比基线'}</b><span class="real-urdf-gripper-source">等待夹爪数据…</span></div><div class="real-urdf-viewport"><canvas class="real-urdf-canvas" width="800" height="580" aria-label="${c.method==='ours'?'我们的方法':'对比基线'}双臂与夹爪三维回放"></canvas></div><div class="real-urdf-frame">等待加载模型…</div><div class="real-urdf-opening"></div></div>`).join('')}</div>
-    <p class="real-urdf-status" role="status">滚动到这里后加载本地模型，不影响上方视频播放。</p>
-    <p class="real-urdf-note">浅色为完整轨迹，深色为已播放部分，亮点标出当前 TCP。双臂使用实测关节角；我们的方法使用夹爪实测状态，基线因夹爪状态全为 0，使用录制的动作指令示意开合（非实测开度，不用于平滑性指标）。两指对称开合，不猜测动作阶段。机身、衣服和接触过程不显示；网格做了轻量化，关节角与轨迹未平滑，模型坐标未与相机标定。</p>`;
+  panel.innerHTML=`<div class="real-urdf-heading"><div><b>3D bimanual arm and gripper replay</b><small>Recorded joint angles · linked to the videos above · drag to rotate / wheel to zoom</small></div><div class="real-urdf-actions"><button class="urdf-play" type="button">Play / pause</button><button class="urdf-restart" type="button">Restart</button><select class="urdf-view" aria-label="3D model view"><option value="iso">3D view</option><option value="front">Front</option><option value="top">Top</option></select><button class="urdf-reset-view" type="button">Reset view</button><button class="urdf-trails" type="button" aria-pressed="true">Hide trails</button></div></div>
+    <div class="real-urdf-grid">${tcp.clips.map(c=>`<div class="real-urdf-model" data-method="${c.method}"><div class="real-urdf-label"><b class="${c.method}">${c.method==='ours'?'Ours · Our method':'Baseline · Comparison baseline'}</b><span class="real-urdf-gripper-source">Waiting for gripper data…</span></div><div class="real-urdf-viewport"><canvas class="real-urdf-canvas" width="800" height="580" aria-label="${c.method==='ours'?'Our method':'Comparison baseline'} bimanual arm and gripper 3D replay"></canvas></div><div class="real-urdf-frame">Waiting for model…</div><div class="real-urdf-opening"></div></div>`).join('')}</div>
+    <p class="real-urdf-status" role="status">The local model loads when this panel approaches the viewport and does not affect video playback above.</p>
+    <p class="real-urdf-note">Light lines show complete trajectories, dark lines show played portions, and bright markers show the current TCP. Both arms use measured joint angles. Ours uses measured gripper state; because the baseline gripper state is all zero, its recorded action command is used only to illustrate opening (not a measured width and not used for smoothness metrics). The two fingers open symmetrically without inferred action stages. The chassis, cloth and contacts are omitted; meshes are simplified, joint angles and trajectories are unsmoothed, and model coordinates are not camera-calibrated.</p>`;
   section.querySelector('.real-tcp-panel').after(panel);
   const status=panel.querySelector('.real-urdf-status');
   const modelCards=[...panel.querySelectorAll('.real-urdf-model')];
@@ -15,7 +15,7 @@
   let resolveReady;const ready=new Promise(resolve=>{resolveReady=resolve;});
   const currentTime=()=>Number(section.dataset.time||0);
   const frameAt=(time,c)=>Math.max(0,Math.min(c.frames-1,Math.floor((time+1e-7)*c.fps)));
-  const loadScript=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(Error('无法加载本地资源 '+src));document.head.append(s);});
+  const loadScript=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(Error('Unable to load local resource '+src));document.head.append(s);});
   function schedule(){if(!loaded||!visible||document.hidden||request)return;request=requestAnimationFrame(()=>{request=0;draw();});}
   function draw(){
     const time=currentTime();
@@ -29,9 +29,9 @@
           view.trails[side].geometry.setDrawRange(0,frame+1);
         }
         modelCards[i].dataset.frame=frame;
-        const ended=frame===clip.frames-1?' · 末帧保持':'';
-        modelCards[i].querySelector('.real-urdf-frame').textContent=`帧 ${frame} · 采集时刻 ${tcp.clips[i].times_s[frame].toFixed(3)} 秒${ended}`;
-        modelCards[i].querySelector('.real-urdf-opening').textContent=`夹爪开度 · 左 ${(clip.grippers.left.width_m[frame]*1000).toFixed(1)} 毫米 / 右 ${(clip.grippers.right.width_m[frame]*1000).toFixed(1)} 毫米`;
+        const ended=frame===clip.frames-1?' · END FRAME HELD':'';
+        modelCards[i].querySelector('.real-urdf-frame').textContent=`frame ${frame} · recorded t ${tcp.clips[i].times_s[frame].toFixed(3)} s${ended}`;
+        modelCards[i].querySelector('.real-urdf-opening').textContent=`Gripper opening · left ${(clip.grippers.left.width_m[frame]*1000).toFixed(1)} mm / right ${(clip.grippers.right.width_m[frame]*1000).toFixed(1)} mm`;
       }
       const box=view.canvas.parentElement,w=Math.max(1,Math.round(box.clientWidth)),h=Math.max(1,Math.round(box.clientHeight));
       if(view.width!==w||view.height!==h){view.renderer.setSize(w,h,false);view.camera.aspect=w/h;view.camera.updateProjectionMatrix();view.width=w;view.height=h;}
@@ -56,7 +56,7 @@
     const renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:false,preserveDrawingBuffer:true});
     renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));renderer.outputColorSpace=T.SRGBColorSpace;
     renderer.setClearColor(0xf5f8f3);renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
-    canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();panel.dataset.status='error';status.textContent='3D 显示上下文已中断；视频与曲线仍可使用，刷新页面可重试。';});
+    canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();panel.dataset.status='error';status.textContent='The 3D display context was interrupted. Videos and curves remain available; reload to retry.';});
     const scene=new T.Scene();scene.background=new T.Color(0xf5f8f3);
     const camera=new T.PerspectiveCamera(39,1,.01,20);camera.up.set(0,0,1);
     const controls=new window.REAL_ROBOT_ORBIT.OrbitControls(camera,canvas);
@@ -89,23 +89,23 @@
     return {canvas,renderer,scene,camera,controls,rig,trails,ghosts,markers,frame:-1};
   }
   async function initialize(){
-    if(started)return ready;started=true;panel.dataset.status='loading';status.textContent='正在加载本地双臂模型…';
+    if(started)return ready;started=true;panel.dataset.status='loading';status.textContent='Loading the local bimanual model…';
     try{
       await Promise.all([loadScript('real_robot_urdf_assets/model_data.js'),loadScript('real_robot_urdf_assets/three.offline.js')]);
       await Promise.all([loadScript('real_robot_urdf_assets/orbit.offline.js'),loadScript('real_robot_urdf_rig.js')]);
       modelData=window.REAL_ROBOT_URDF_DATA;
-      if(modelData.version!==2||modelData.kind!=='recorded_state_urdf_replay'||!modelData.grippers_shown||modelData.gripper_mesh_variant!=='piper_slave_meshes'||modelData.urdf_sha256!==tcp.urdf_sha256)throw Error('3D 模型来源不匹配，请刷新页面');
-      if(modelData.clips.length!==2||modelData.clips.some((c,i)=>c.method!==tcp.clips[i].method||c.collection_id!==tcp.clips[i].collection_id||c.frames!==tcp.clips[i].frames||c.fps!==tcp.clips[i].fps||c.annotation_sha256!==tcp.clips[i].annotation_sha256))throw Error('3D 关节记录与视频不匹配');
+      if(modelData.version!==2||modelData.kind!=='recorded_state_urdf_replay'||!modelData.grippers_shown||modelData.gripper_mesh_variant!=='piper_slave_meshes'||modelData.urdf_sha256!==tcp.urdf_sha256)throw Error('3D model provenance mismatch; reload the page');
+      if(modelData.clips.length!==2||modelData.clips.some((c,i)=>c.method!==tcp.clips[i].method||c.collection_id!==tcp.clips[i].collection_id||c.frames!==tcp.clips[i].frames||c.fps!==tcp.clips[i].fps||c.annotation_sha256!==tcp.clips[i].annotation_sha256))throw Error('3D joint records do not match the displayed videos');
       modelData.clips.forEach((c,i)=>{
         const command=Object.values(c.grippers).some(g=>g.source==='observation_hands_action');
-        modelCards[i].querySelector('.real-urdf-gripper-source').textContent=command?'夹爪：指令回放 · 非实测':'夹爪：实测状态';
+        modelCards[i].querySelector('.real-urdf-gripper-source').textContent=command?'Gripper: command replay · not measured':'Gripper: measured state';
       });
       const T=window.REAL_ROBOT_THREE,geometries=window.createRealURDFGeometry(modelData);
       for(let i=0;i<2;i++)pair.push(makeView(T,modelData.clips[i],i,geometries));
       loaded=true;viewMode();draw();panel.dataset.status='ready';
-      status.textContent='已加载 · 与视频逐帧联动 · 两侧视角同步 · 绿色 / 橙色为两种方法的双臂轨迹';
+      status.textContent='Loaded · frame-linked to video · synchronized views · green / orange show the two methods’ bimanual trajectories';
       resolveReady(true);
-    }catch(error){panel.dataset.status='error';status.textContent=`3D 暂不可用：${error.message}。上方视频和 TCP 曲线不受影响。`;resolveReady(false);}
+    }catch(error){panel.dataset.status='error';status.textContent=`3D unavailable: ${error.message}. Videos and TCP curves above remain available.`;resolveReady(false);}
     return ready;
   }
   const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible){initialize();schedule();}},{rootMargin:'250px'});observer.observe(panel);
@@ -118,7 +118,7 @@
   panel.querySelector('.urdf-reset-view').addEventListener('click',()=>{panel.querySelector('.urdf-view').value='iso';viewMode();});
   panel.querySelector('.urdf-trails').addEventListener('click',event=>{
     showTrails=!showTrails;pair.forEach(v=>{for(const side of ['left','right']){v.trails[side].visible=showTrails;v.ghosts[side].visible=showTrails;}});
-    event.target.textContent=showTrails?'隐藏轨迹':'显示轨迹';event.target.setAttribute('aria-pressed',String(showTrails));schedule();
+    event.target.textContent=showTrails?'Hide trails':'Show trails';event.target.setAttribute('aria-pressed',String(showTrails));schedule();
   });
   window.REAL_ROBOT_URDF_VIEWER={ready,initialize,inspect:()=>({status:panel.dataset.status,showTrails,views:pair.map((v,i)=>({method:modelData.clips[i].method,frame:v.frame,links:v.rig.linkNames,tcp:v.rig.tcpPositions(),grippers:v.rig.gripperState(),camera:v.camera.position.toArray(),trailCounts:Object.fromEntries(Object.entries(v.trails).map(([side,t])=>[side,t.geometry.drawRange.count])),renderCalls:v.renderer.info.render.calls,triangles:v.renderer.info.render.triangles}))})};
 })();
