@@ -5,9 +5,9 @@
   if(!section||!tcp)return;
   const panel=document.createElement('div');panel.className='real-urdf-panel';panel.id='real-robot-3d';panel.dataset.status='waiting';
   panel.innerHTML=`<div class="real-urdf-heading"><div><b>3D 双臂与夹爪回放</b><small>真实关节角驱动 · 跟随上方视频 · 拖动旋转 / 滚轮缩放</small></div><div class="real-urdf-actions"><button class="urdf-play" type="button">播放 / 暂停</button><button class="urdf-restart" type="button">从头</button><select class="urdf-view" aria-label="3D 模型视角"><option value="iso">3D 视角</option><option value="front">正面</option><option value="top">俯视</option></select><button class="urdf-reset-view" type="button">复位视角</button><button class="urdf-trails" type="button" aria-pressed="true">隐藏轨迹</button></div></div>
-    <div class="real-urdf-grid">${tcp.clips.map(c=>`<div class="real-urdf-model" data-method="${c.method}"><div class="real-urdf-label"><b class="${c.method}">${c.method==='ours'?'Ours · 我们的方法':'Baseline · 对比基线'}</b><span class="real-urdf-gripper-source">等待夹爪数据…</span></div><div class="real-urdf-viewport"><canvas class="real-urdf-canvas" width="800" height="580" aria-label="${c.method==='ours'?'我们的方法':'对比基线'}双臂与夹爪三维回放"></canvas></div><div class="real-urdf-frame">等待加载模型…</div><div class="real-urdf-opening"></div></div>`).join('')}</div>
+    <div class="real-urdf-grid">${tcp.clips.map(c=>`<div class="real-urdf-model" data-method="${c.method}"><div class="real-urdf-label"><b class="${c.method}">${c.method==='ours'?'我们的方法':'对比基线'}</b><span class="real-urdf-gripper-source">等待夹爪数据…</span></div><div class="real-urdf-viewport"><canvas class="real-urdf-canvas" width="800" height="580" aria-label="${c.method==='ours'?'我们的方法':'对比基线'}双臂与夹爪三维回放"></canvas></div><div class="real-urdf-frame">等待加载模型…</div><div class="real-urdf-opening"></div></div>`).join('')}</div>
     <p class="real-urdf-status" role="status">滚动到这里后加载本地模型，不影响上方视频播放。</p>
-    <p class="real-urdf-note">浅色为完整轨迹，深色为已播放部分，亮点标出当前 TCP。双臂使用实测关节角；我们的方法使用夹爪实测 state，基线因夹爪 state 全为 0，使用录制的 action 指令示意开合（非实测开度，不用于平滑性指标）。两指对称开合，不猜测动作阶段。机身、衣服和接触过程不显示；网格做了轻量化，关节角与轨迹未平滑，模型坐标未与相机标定。</p>`;
+    <p class="real-urdf-note">浅色为完整轨迹，深色为已播放部分，亮点标出当前 TCP。双臂使用实测关节角；我们的方法使用夹爪实测状态，基线因夹爪状态全为 0，使用录制的动作指令示意开合（非实测开度，不用于平滑性指标）。两指对称开合，不猜测动作阶段。机身、衣服和接触过程不显示；网格做了轻量化，关节角与轨迹未平滑，模型坐标未与相机标定。</p>`;
   section.querySelector('.real-tcp-panel').after(panel);
   const status=panel.querySelector('.real-urdf-status');
   const modelCards=[...panel.querySelectorAll('.real-urdf-model')];
@@ -30,8 +30,8 @@
         }
         modelCards[i].dataset.frame=frame;
         const ended=frame===clip.frames-1?' · 末帧保持':'';
-        modelCards[i].querySelector('.real-urdf-frame').textContent=`frame ${frame} · 采集 t ${tcp.clips[i].times_s[frame].toFixed(3)} s${ended}`;
-        modelCards[i].querySelector('.real-urdf-opening').textContent=`夹爪开度 · 左 ${(clip.grippers.left.width_m[frame]*1000).toFixed(1)} mm / 右 ${(clip.grippers.right.width_m[frame]*1000).toFixed(1)} mm`;
+        modelCards[i].querySelector('.real-urdf-frame').textContent=`帧 ${frame} · 采集时刻 ${tcp.clips[i].times_s[frame].toFixed(3)} 秒${ended}`;
+        modelCards[i].querySelector('.real-urdf-opening').textContent=`夹爪开度 · 左 ${(clip.grippers.left.width_m[frame]*1000).toFixed(1)} 毫米 / 右 ${(clip.grippers.right.width_m[frame]*1000).toFixed(1)} 毫米`;
       }
       const box=view.canvas.parentElement,w=Math.max(1,Math.round(box.clientWidth)),h=Math.max(1,Math.round(box.clientHeight));
       if(view.width!==w||view.height!==h){view.renderer.setSize(w,h,false);view.camera.aspect=w/h;view.camera.updateProjectionMatrix();view.width=w;view.height=h;}
