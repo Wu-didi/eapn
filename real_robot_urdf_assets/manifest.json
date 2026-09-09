@@ -1,0 +1,192 @@
+{
+  "version": 2,
+  "kind": "recorded_state_urdf_replay",
+  "urdf_sha256": "fbff26b344cd863f17ab0b979f463736d04fdb21e6dcf5f949468286e781341d",
+  "grippers_shown": true,
+  "carrier_shown": false,
+  "source_state": "observation_hands_state",
+  "motion_smoothing": "none",
+  "gripper_mesh_variant": "piper_slave_meshes",
+  "mesh_overrides": {
+    "link6": {
+      "urdf_reference": "meshes/link6.STL",
+      "urdf_reference_sha256": "227f63feb64d17c397c76ebb96a8720476345a3bba36e0d6d7c9d938db8ce677",
+      "display_reference": "meshes/piper_slave_meshes/link6.STL",
+      "display_sha256": "227f63feb64d17c397c76ebb96a8720476345a3bba36e0d6d7c9d938db8ce677",
+      "reason": "Explicit follower gripper set; the flat link8 file is the master variant."
+    },
+    "link7": {
+      "urdf_reference": "meshes/link7.STL",
+      "urdf_reference_sha256": "63d89c3e9d5aba6c230f21a1e8ad5724f3818a1dba7e3493c58de4bee8d44cac",
+      "display_reference": "meshes/piper_slave_meshes/link7.STL",
+      "display_sha256": "63d89c3e9d5aba6c230f21a1e8ad5724f3818a1dba7e3493c58de4bee8d44cac",
+      "reason": "Explicit follower gripper set; the flat link8 file is the master variant."
+    },
+    "link8": {
+      "urdf_reference": "meshes/link8.STL",
+      "urdf_reference_sha256": "5243da7409afba56bb3fb44f97420ae1b1f4f848d77c164ad317e6030b30702b",
+      "display_reference": "meshes/piper_slave_meshes/link8.STL",
+      "display_sha256": "8ff0fa31925c2339f8c64171e47c91410b671530d6613e33472b710cc4968ece",
+      "reason": "Explicit follower gripper set; the flat link8 file is the master variant."
+    }
+  },
+  "gripper_policy": "Use measured state; if the entire state stream is zero, use recorded action as a clearly labeled command proxy. Never rewrite raw records.",
+  "mesh_description": "URDF STL arm surfaces with explicit follower gripper meshes; display-only vertex clustering",
+  "mesh_cell_m": 0.0015,
+  "coordinate_frame": "footprint",
+  "meshes": {
+    "base_link": {
+      "source": "ee_assets/meshes/base_link.STL",
+      "sha256": "fd9c5c5816513cae313b6bee70f95474faadd136eb3ea19c68ffa451dfcd962a",
+      "source_triangles": 10700,
+      "triangles": 6119,
+      "vertices": 2953
+    },
+    "link1": {
+      "source": "ee_assets/meshes/link1.STL",
+      "sha256": "2288b210ac2a4a0a6150cbe024870e6d1eee21dea320d5d6d19d17eb3099b8ea",
+      "source_triangles": 18760,
+      "triangles": 9617,
+      "vertices": 4654
+    },
+    "link2": {
+      "source": "ee_assets/meshes/link2.STL",
+      "sha256": "09f46d7c93dccf8073491fb4ef6fb89dbe5ec9b5e82ad2c383b96a50dd6fe81f",
+      "source_triangles": 71956,
+      "triangles": 28375,
+      "vertices": 13545
+    },
+    "link3": {
+      "source": "ee_assets/meshes/link3.STL",
+      "sha256": "80077a3cb2fd4bf4a7f65920c8f3e2f3a590c6059146dc08731a536244114210",
+      "source_triangles": 54070,
+      "triangles": 25210,
+      "vertices": 11513
+    },
+    "link4": {
+      "source": "ee_assets/meshes/link4.STL",
+      "sha256": "e9963ce55b0796a61e4f9eb3445d81f4d40b67dcfd43eafcf2619c637f341cfe",
+      "source_triangles": 14608,
+      "triangles": 6255,
+      "vertices": 2992
+    },
+    "link5": {
+      "source": "ee_assets/meshes/link5.STL",
+      "sha256": "ab9877b96fe2b69622011049735f0fd244b1e30ada2dc65840364c07a5154323",
+      "source_triangles": 22956,
+      "triangles": 8678,
+      "vertices": 3895
+    },
+    "link6": {
+      "source": "ee_assets/meshes/piper_slave_meshes/link6.STL",
+      "sha256": "227f63feb64d17c397c76ebb96a8720476345a3bba36e0d6d7c9d938db8ce677",
+      "source_triangles": 20392,
+      "triangles": 10842,
+      "vertices": 4939
+    },
+    "link7": {
+      "source": "ee_assets/meshes/piper_slave_meshes/link7.STL",
+      "sha256": "63d89c3e9d5aba6c230f21a1e8ad5724f3818a1dba7e3493c58de4bee8d44cac",
+      "source_triangles": 1838,
+      "triangles": 1017,
+      "vertices": 473
+    },
+    "link8": {
+      "source": "ee_assets/meshes/piper_slave_meshes/link8.STL",
+      "sha256": "8ff0fa31925c2339f8c64171e47c91410b671530d6613e33472b710cc4968ece",
+      "source_triangles": 1836,
+      "triangles": 1003,
+      "vertices": 466
+    }
+  },
+  "clips": [
+    {
+      "method": "ours",
+      "collection_id": 2047,
+      "frames": 1010,
+      "fps": 30,
+      "annotation_sha256": "ec080f0ed59b419920bcfead0da4f060887584f1da2e544687a17304528e34b5",
+      "grippers": {
+        "left": {
+          "source": "observation_hands_state",
+          "role": "recorded_measured_opening",
+          "measured_state_all_zero": false,
+          "state_range_m": [
+            0.002099999925121665,
+            0.07609999924898148
+          ],
+          "command_range_m": [
+            0.0015540373278781772,
+            0.07677873224020004
+          ],
+          "clamped_samples": 0,
+          "fabricated_or_interpolated": false
+        },
+        "right": {
+          "source": "observation_hands_state",
+          "role": "recorded_measured_opening",
+          "measured_state_all_zero": false,
+          "state_range_m": [
+            0.0,
+            0.06949999928474426
+          ],
+          "command_range_m": [
+            0.0,
+            0.06949999928474426
+          ],
+          "clamped_samples": 0,
+          "fabricated_or_interpolated": false
+        }
+      }
+    },
+    {
+      "method": "baseline",
+      "collection_id": 1721,
+      "frames": 1693,
+      "fps": 30,
+      "annotation_sha256": "febd0eb1427977c5695c9e7fa1c243396e87e8ea8abe9ce7ced901a204056e50",
+      "grippers": {
+        "left": {
+          "source": "observation_hands_action",
+          "role": "recorded_command_proxy_not_measured",
+          "measured_state_all_zero": true,
+          "state_range_m": [
+            0.0,
+            0.0
+          ],
+          "command_range_m": [
+            0.0013000000035390258,
+            0.07039999961853027
+          ],
+          "clamped_samples": 0,
+          "fabricated_or_interpolated": false
+        },
+        "right": {
+          "source": "observation_hands_action",
+          "role": "recorded_command_proxy_not_measured",
+          "measured_state_all_zero": true,
+          "state_range_m": [
+            0.0,
+            0.0
+          ],
+          "command_range_m": [
+            0.0,
+            0.07020000368356705
+          ],
+          "clamped_samples": 0,
+          "fabricated_or_interpolated": false
+        }
+      }
+    }
+  ],
+  "vendor": [
+    {
+      "source": "/home/user/kai0_optimization/scripts/infer_viewer/vendor/three.module.js",
+      "sha256": "313203957197800a1dfa954cfde84103be12bcd8e33aeee07be04216002b2e6d"
+    },
+    {
+      "source": "/home/user/kai0_optimization/scripts/infer_viewer/vendor/OrbitControls.js",
+      "sha256": "eff65e67c005396706b7c32492dd2022d696288797e96a1fb51f8f0973f1c62a"
+    }
+  ]
+}

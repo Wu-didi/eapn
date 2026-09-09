@@ -1,0 +1,41 @@
+{
+  "joint_angle_unit": "rad",
+  "expected_urdf_sha256": "fbff26b344cd863f17ab0b979f463736d04fdb21e6dcf5f949468286e781341d",
+  "reference_pipeline": "/home/user/inference/scripts/plot_runtime_tcp_dynamics.py",
+  "reference_fk": "/home/user/kai0_optimization/analysis_scripts/eval_episode_first_action_compare.py",
+  "model_scope": "Reuse the inference repository's pinned URDF and arm mapping. This local model is not asserted byte-identical to the login-protected Datasight model, nor calibrated to either camera.",
+  "tcp_definition": "Nominal symmetric gripper center: link6 local point [0,0,0.13503] m, the common zero-opening origin of link7/link8. The reference midpoint differs by at most sub-micrometre roundoff from truncated URDF finger rotations.",
+  "gripper_handling": "Use six measured arm joints only. Opening does not change the nominal symmetric gripper center; do not apply the reference command-unit gripper heuristic to measured widths.",
+  "arms": {
+    "left": {
+      "base_link": "footprint",
+      "tcp_link": "fl_link6",
+      "tcp_offset_m": [0, 0, 0.13503],
+      "joint_map": {
+        "fl_joint1": "left_joint1",
+        "fl_joint2": "left_joint2",
+        "fl_joint3": "left_joint3",
+        "fl_joint4": "left_joint4",
+        "fl_joint5": "left_joint5",
+        "fl_joint6": "left_joint6"
+      },
+      "point_description": "左夹爪对称中心，沿用 inference 的末端定义",
+      "coordinate_description": "URDF 模型坐标系 footprint（非相机标定世界坐标）"
+    },
+    "right": {
+      "base_link": "footprint",
+      "tcp_link": "fr_link6",
+      "tcp_offset_m": [0, 0, 0.13503],
+      "joint_map": {
+        "fr_joint1": "right_joint1",
+        "fr_joint2": "right_joint2",
+        "fr_joint3": "right_joint3",
+        "fr_joint4": "right_joint4",
+        "fr_joint5": "right_joint5",
+        "fr_joint6": "right_joint6"
+      },
+      "point_description": "右夹爪对称中心，沿用 inference 的末端定义",
+      "coordinate_description": "URDF 模型坐标系 footprint（非相机标定世界坐标）"
+    }
+  }
+}

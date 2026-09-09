@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "basis": "All real recorded state frames; reference inference URDF helper",
+  "urdf_sha256": "fbff26b344cd863f17ab0b979f463736d04fdb21e6dcf5f949468286e781341d",
+  "tolerance_m": 2e-07,
+  "tolerance_reason": "Reference finger rotations are truncated at 1.5708 rad; the nominal symmetric center is fixed in link6.",
+  "hardware_calibration_verified": false,
+  "checks": [
+    {
+      "method": "ours",
+      "arm": "left",
+      "frames": 1010,
+      "max_reference_difference_m": 1.461935611740872e-07,
+      "original_timestamp_speed_verified": true
+    },
+    {
+      "method": "ours",
+      "arm": "right",
+      "frames": 1010,
+      "max_reference_difference_m": 1.4509160843907252e-07,
+      "original_timestamp_speed_verified": true
+    },
+    {
+      "method": "baseline",
+      "arm": "left",
+      "frames": 1693,
+      "max_reference_difference_m": 4.965068306494546e-16,
+      "original_timestamp_speed_verified": true
+    },
+    {
+      "method": "baseline",
+      "arm": "right",
+      "frames": 1693,
+      "max_reference_difference_m": 4.440892098500626e-16,
+      "original_timestamp_speed_verified": true
+    }
+  ]
+}
