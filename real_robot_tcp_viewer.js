@@ -15,14 +15,13 @@ window.createRealTCPViewer = function(section, data) {
   const colors = ['#087d66', '#cb732f'];
   const wrap = document.createElement('div');
   wrap.className = 'tcp-panel real-tcp-panel';
-  const methodLabel = c => c.method === 'ours' ? 'Ours · Our method' : 'Baseline · Comparison baseline';
-  wrap.innerHTML = `<div class="tcp-heading"><div><b>Real-robot TCP trajectories · forward-kinematics reconstruction</b><small>Measured joint state → URDF → end-effector coordinates · metres · no smoothing</small></div><div class="real-tcp-selectors"><label>Arm <select class="real-tcp-arm"><option value="left">Left</option><option value="right">Right</option></select></label><label>View <select class="real-tcp-projection"><option value="iso">3D isometric</option><option value="xy">XY</option><option value="xz">XZ</option><option value="yz">YZ</option></select></label></div></div>
+  wrap.innerHTML = `<div class="tcp-heading"><div><b>真机 TCP 轨迹 · 正向运动学重建</b><small>实测关节 state → URDF → 末端坐标 · 米 · 未做平滑</small></div><div class="real-tcp-selectors"><label>机械臂 <select class="real-tcp-arm"><option value="left">左臂</option><option value="right">右臂</option></select></label><label>视角 <select class="real-tcp-projection"><option value="iso">3D 等轴测</option><option value="xy">XY</option><option value="xz">XZ</option><option value="yz">YZ</option></select></label></div></div>
     <p class="tcp-caption real-tcp-definition"></p>
-    <div class="tcp-spatial">${data.clips.map((c,i)=>`<div><div class="tcp-label"><b style="color:${colors[i]}">${methodLabel(c)}</b><span>Collection ${c.collection_id}</span></div><canvas class="tcp-plot" width="800" height="490" role="img" aria-label="${methodLabel(c)} forward-kinematics TCP trajectory"></canvas><div class="tcp-coordinates"></div></div>`).join('')}</div>
-    <div class="tcp-curve-head"><b>TCP motion curves linked to the videos</b><select class="real-tcp-signal" aria-label="Real-robot TCP signal"><option value="speed">End-effector speed (m/s)</option><option value="x">X position (m)</option><option value="y">Y position (m)</option><option value="z">Z position (m)</option></select></div>
-    <p class="tcp-caption"><span class="dot green"></span>Ours <span class="dot orange"></span>Baseline · dark trajectories show the played portion; dots mark the position at the current exported frame.</p>
-    <p class="tcp-caption">Linked to video by exported frame_index; hardware-level synchronization has not been independently verified. Curves and speeds use the original t_sec and preserve timestamp gaps, so collection-time cursors may differ. Positions are model reconstructions, not independent external-sensor measurements.</p>
-    <p class="tcp-caption"><a href="real_robot_tcp.json" download>Download complete bimanual TCP coordinates, timestamps and model provenance</a></p>`;
+    <div class="tcp-spatial">${data.clips.map((c,i)=>`<div><div class="tcp-label"><b style="color:${colors[i]}">${esc(c.label)}</b><span>记录 ${c.collection_id}</span></div><canvas class="tcp-plot" width="800" height="490" role="img" aria-label="${esc(c.label)}正向运动学 TCP 轨迹"></canvas><div class="tcp-coordinates"></div></div>`).join('')}</div>
+    <div class="tcp-curve-head"><b>视频下方的 TCP 运动曲线</b><select class="real-tcp-signal" aria-label="真机 TCP 曲线"><option value="speed">末端速度 (m/s)</option><option value="x">X 位置 (m)</option><option value="y">Y 位置 (m)</option><option value="z">Z 位置 (m)</option></select></div>
+    <p class="tcp-caption"><span class="dot green"></span>我们的方法 <span class="dot orange"></span>基线 · 深色轨迹为已播放部分，圆点为当前导出帧对应的位置。</p>
+    <p class="tcp-caption">按导出 frame_index 与视频联动，尚未独立核验硬件级同步。曲线和速度使用原始 t_sec，保留时间戳跳步；两侧采集时间游标可能不重合。图中位置是模型重建值，不是外部传感器独立测量。</p>
+    <p class="tcp-caption"><a href="real_robot_tcp.json" download>下载完整双臂 TCP 坐标、时间戳及模型来源</a></p>`;
   section.querySelector('.controls').after(wrap);
   const spatial = [...wrap.querySelectorAll('.tcp-plot')];
   const coordinates = [...wrap.querySelectorAll('.tcp-coordinates')];
@@ -34,7 +33,7 @@ window.createRealTCPViewer = function(section, data) {
     canvas.className = 'tcp-curve real-tcp-curve';
     canvas.width = 800; canvas.height = 220;
     canvas.setAttribute('role', 'img');
-    canvas.setAttribute('aria-label', `${methodLabel(clip)} TCP motion curve`);
+    canvas.setAttribute('aria-label', `${clip.label}的 TCP 运动曲线`);
     canvas.dataset.method = clip.method;
     canvas.dataset.collectionId = clip.collection_id;
     box.append(canvas); clipElements[i].append(box);
@@ -65,7 +64,7 @@ window.createRealTCPViewer = function(section, data) {
     wrap.dataset.frames=indices.join(',');wrap.dataset.arm=arm.value;
     wrap.dataset.projection=projection.value;wrap.dataset.signal=signal.value;
     const spec=data.arms[arm.value];
-    wrap.querySelector('.real-tcp-definition').textContent=`${arm.value === 'left' ? 'Left' : 'Right'} symmetric gripper center, following the inference end-effector definition; coordinates use the URDF footprint frame and are not camera-calibrated. Both methods use identical coordinate ranges and scale.`;
+    wrap.querySelector('.real-tcp-definition').textContent=`${spec.point_description}；${spec.coordinate_description}。两侧采用相同坐标范围与比例。`;
     const points=data.clips.map(c=>c.arms[arm.value].xyz_m);
     const all=points.flat();
     const lows=[0,1,2].map(d=>Math.min(...all.map(p=>p[d])));
@@ -85,7 +84,7 @@ window.createRealTCPViewer = function(section, data) {
       stroke(ctx,pp,'#d1ddd5',2);stroke(ctx,pp.slice(0,f+1),colors[i],2.4);stroke(ctx,pp.slice(tail,f+1),colors[i],4);
       pp.slice(tail,f+1).forEach(p=>dot(ctx,p,colors[i],2.5));
       dot(ctx,pp[f],'#fff',9);dot(ctx,pp[f],colors[i],6);
-      ctx.fillStyle='#66766d';ctx.fillText('Raw samples / identical coordinate scale',20,h-20);
+      ctx.fillStyle='#66766d';ctx.fillText('原始采样点 / 相同坐标比例',20,h-20);
       const p=points[i][f];
       coordinates[i].textContent=`frame ${f} · t ${data.clips[i].times_s[f].toFixed(3)} s · X ${p[0].toFixed(3)} / Y ${p[1].toFixed(3)} / Z ${p[2].toFixed(3)} m`;
     });
@@ -109,7 +108,7 @@ window.createRealTCPViewer = function(section, data) {
       stroke(ctx,pp,colors[i]+'55',1.7);stroke(ctx,pp.slice(0,f+1),colors[i],2.7);
       ctx.setLineDash([5,7]);stroke(ctx,[xy(tt[f],lo),xy(tt[f],hi)],colors[i],1.6);ctx.setLineDash([]);
       if(pp[f])dot(ctx,pp[f],colors[i],5);
-      ctx.fillStyle='#20382e';ctx.fillText(`${arm.value==='left'?'Left arm':'Right arm'} · ${signal.value==='speed'?'TCP speed (m/s)':`TCP ${signal.value.toUpperCase()} (m)`}`,left,23);
+      ctx.fillStyle='#20382e';ctx.fillText(`${arm.value==='left'?'左臂':'右臂'} · ${signal.value==='speed'?'TCP speed (m/s)':`TCP ${signal.value.toUpperCase()} (m)`}`,left,23);
       curve.dataset.frame=f;curve.dataset.arm=arm.value;curve.dataset.signal=signal.value;
       curve.dataset.time=tt[f];curve.dataset.range=[lo,hi,xmax].join(',');
     });
