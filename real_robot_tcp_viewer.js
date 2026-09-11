@@ -21,7 +21,6 @@ window.createRealTCPViewer = function(section, data) {
     <div class="tcp-spatial">${data.clips.map((c,i)=>`<div><div class="tcp-label"><b style="color:${colors[i]}">${methodLabel(c)}</b><span>Collection ${c.collection_id}</span></div><canvas class="tcp-plot" width="800" height="490" role="img" aria-label="${methodLabel(c)} forward-kinematics TCP trajectory"></canvas><div class="tcp-coordinates"></div></div>`).join('')}</div>
     <div class="tcp-curve-head"><b>TCP motion curves linked to the videos</b><select class="real-tcp-signal" aria-label="Real-robot TCP signal"><option value="speed">End-effector speed (m/s)</option><option value="x">X position (m)</option><option value="y">Y position (m)</option><option value="z">Z position (m)</option></select></div>
     <p class="tcp-caption"><span class="dot green"></span>Ours <span class="dot orange"></span>Baseline · dark trajectories show the played portion; dots mark the position at the current exported frame.</p>
-    <p class="tcp-caption">Linked to video by exported frame_index; hardware-level synchronization has not been independently verified. Curves and speeds use the original t_sec and preserve timestamp gaps, so collection-time cursors may differ. Positions are model reconstructions, not independent external-sensor measurements.</p>
     <p class="tcp-caption"><a href="real_robot_tcp.json" download>Download complete bimanual TCP coordinates, timestamps and model provenance</a></p>`;
   section.querySelector('.controls').after(wrap);
   const spatial = [...wrap.querySelectorAll('.tcp-plot')];
