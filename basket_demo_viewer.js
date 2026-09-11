@@ -50,7 +50,6 @@
         <div class="timeline"><span>0 s</span><input class="real-timeline" type="range" min="0" max="0" value="0" step="0.1" aria-label="Trial ${trial.number} shared video time in seconds"><span class="basket-end-time">0.0 s</span></div>
         <div class="error" role="status"></div>
       </div>
-      <p class="case-note">Both recordings start together and follow the same elapsed video time. They are not cropped, stretched or duration-normalized. When one recording finishes first, its final frame is held while the other continues.</p>
       <div class="real-downloads">${trial.clips.map(clip => `<div><b class="real-${clip.method}">${escape(clip.label)}</b><a href="${escape(clip.src)}" download>Original video</a></div>`).join('')}</div>
     </article>`).join('');
 
